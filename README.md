@@ -1,3 +1,9 @@
+# Fork Info
+
+Just fixing a few things.  
+
+Published components at:  
+https://www.npmjs.com/package/@eclarift/ui-kitten-components  
 
 # UI Kitten [<img src="https://i.imgur.com/oMcxwZ0.png" alt="Eva Design System" height="20px" />][link:eva] [![npm][badge:license]]() [![Build Status][badge:github-actions]][link:github-actions] [![Coverage Status][badge:coveralls]][link:coveralls]
 
