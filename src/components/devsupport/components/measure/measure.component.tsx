@@ -6,6 +6,7 @@
 
 import React from 'react';
 import {
+  findNodeHandle,
   UIManager,
   StatusBar,
 } from 'react-native';
@@ -45,7 +46,7 @@ export type MeasuringElement = React.ReactElement;
  */
 export const MeasureElement: React.FC<MeasureElementProps> = (props): MeasuringElement => {
 
-  const ref = React.useRef(null);
+  const ref = React.useRef();
 
   const bindToWindow = (frame: Frame, window: Frame): Frame => {
     if (frame.origin.x < window.size.width) {
@@ -73,7 +74,8 @@ export const MeasureElement: React.FC<MeasureElementProps> = (props): MeasuringE
   };
 
   const measureSelf = (): void => {
-    ref.current?.measureInWindow(onUIManagerMeasure);
+    const node: number = findNodeHandle(ref.current);
+    UIManager.measureInWindow(node, onUIManagerMeasure);
   };
 
   if (props.force) {
