@@ -64,7 +64,7 @@ export const MeasureElement: React.FC<MeasureElementProps> = (props): MeasuringE
   };
 
   const measureSelf = (): void => {
-    if (!ref.current) {
+    if (!ref.current || typeof ref.current.getBoundingClientRect !== 'function') {
       return;
     }
     const rect = ref.current.getBoundingClientRect();
