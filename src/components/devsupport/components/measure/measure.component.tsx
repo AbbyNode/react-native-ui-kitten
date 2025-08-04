@@ -4,7 +4,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
 
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import {
   findNodeHandle,
   UIManager,
@@ -46,7 +46,7 @@ export type MeasuringElement = React.ReactElement;
  */
 export const MeasureElement: React.FC<MeasureElementProps> = (props): MeasuringElement => {
 
-  const ref = React.useRef();
+  const ref = React.useRef(null);
 
   const bindToWindow = (frame: Frame, window: Frame): Frame => {
     if (frame.origin.x < window.size.width) {
@@ -63,26 +63,29 @@ export const MeasureElement: React.FC<MeasureElementProps> = (props): MeasuringE
     return bindToWindow(boundFrame, window);
   };
 
-  const onUIManagerMeasure = (x: number, y: number, w: number, h: number): void => {
-    if (!w && !h) {
-      measureSelf();
-    } else {
-      const originY = props.shouldUseTopInsets ? y + StatusBar.currentHeight || 0 : y;
-      const frame: Frame = bindToWindow(new Frame(x, originY, w, h), Frame.window());
-      props.onMeasure(frame);
-    }
-  };
-
   const measureSelf = (): void => {
-    const node: number = findNodeHandle(ref.current);
-    UIManager.measureInWindow(node, onUIManagerMeasure);
+    if (!ref.current) {
+      return;
+    }
+    const rect = ref.current.getBoundingClientRect();
+    if (!rect) {
+      return;
+    }
+
+    const originY = props.shouldUseTopInsets ? rect.y + StatusBar.currentHeight || 0 : rect.y;
+    const frame: Frame = bindToWindow(new Frame(rect.x, originY, rect.width, rect.height), Frame.window());
+    props.onMeasure(frame);
   };
 
   if (props.force) {
     measureSelf();
   }
 
-  return React.cloneElement(props.children, { ref, onLayout: measureSelf });
+  useLayoutEffect(() => {
+    measureSelf();
+  }, [props.force, ref.current]);
+
+  return React.cloneElement(props.children, { ref });
 };
 
 MeasureElement.defaultProps = {
